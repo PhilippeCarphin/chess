@@ -28,13 +28,13 @@ class BoardCanvas(Canvas):
         self.board = ChessBoard().board
         self.side = int(master.winfo_width() / 8)
         self.move = 0  # For testing
-        self.current_piece = None
+        self.cursor_piece = None
         self.origin_square = None
 
     def motion_event(self, event):
-        self.draw_position()
-        if self.current_piece is not None:
-            self.draw_piece(event.x -30, event.y-30, self.current_piece)
+        if self.cursor_piece is not None:
+            self.draw_position()
+            self.draw_piece(event.x -30, event.y-30, self.cursor_piece)
 
     def coord_to_square(self, x, y):
         file = chr(ord('a') + int(x / self.side))
@@ -42,15 +42,14 @@ class BoardCanvas(Canvas):
         return Square(file, row)
 
     def button_event(self, event):
-        if self.current_piece is None:
-            file, row = self.coord_to_square(event.x, event.y)
-            self.origin_square = Square(file, row)
-            self.current_piece = self.board.piece_at(self.origin_square)
+        if self.cursor_piece is None:
+            self.origin_square = self.coord_to_square(event.x, event.y)
+            self.cursor_piece = self.board.piece_at(self.origin_square)
 
     def button_release_event(self, event):
-        self.current_piece = None
-
-        self.board.move_piece(self.origin_square, self.coord_to_square(event.x, event.y))
+        self.cursor_piece = None
+        destination_square = self.coord_to_square(event.x, event.y)
+        self.board.move_piece(self.origin_square, destination_square)
         self.draw_position()
 
     def draw_symbol(self, x, y, symbol):
@@ -76,7 +75,7 @@ class BoardCanvas(Canvas):
     def draw_pieces(self):
         for square in self.board:
             piece = self.board.piece_at(square)
-            if piece is not self.current_piece:
+            if piece is not self.cursor_piece:
                 x, y = self.square_to_coord(square.file, square.row)
                 self.draw_piece(x, y, piece)
 
@@ -118,6 +117,7 @@ def display_board(board):
     root = Tk()
     root.minsize(400, 400)
     bc = BoardCanvas(root)
+
     root.bind('<Key>', bc.key_event)
     bc.place(relwidth=1.0, relheight=1.0)
     bc.board = board
