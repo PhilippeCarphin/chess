@@ -21,12 +21,12 @@ black_unicode = {PieceType.KING: u'\u265A',
 class BoardCanvas(Canvas):
     def __init__(self, master):
         Canvas.__init__(self, master, bd=0, cursor='circle', relief='sunken')
+        self.master = master
         self.bind('<Configure>', self.configure_event)
         self.bind('<Button>', self.button_event)
         self.bind('<ButtonRelease>', self.button_release_event)
         self.bind('<Motion>', self.motion_event)
-        self.chess_game = ChessGame()
-        self.board = self.chess_game.board
+        self.board = ChessBoard()
         self.side = int(master.winfo_width() / 8)
         self.move = 0  # For testing
         self.cursor_piece = None
@@ -43,7 +43,6 @@ class BoardCanvas(Canvas):
         return Square(file, row)
 
     def button_event(self, event):
-        self.board = self.chess_game.board
         if self.cursor_piece is None:
             self.origin_square = self.coord_to_square(event.x, event.y)
             self.cursor_piece = self.board.piece_at(self.origin_square)
@@ -51,7 +50,7 @@ class BoardCanvas(Canvas):
     def button_release_event(self, event):
         self.cursor_piece = None
         destination_square = self.coord_to_square(event.x, event.y)
-        self.chess_game.play_move(self.origin_square, destination_square)
+        self.master.move_submit(self.origin_square, destination_square)
         self.draw_position()
 
     def draw_symbol(self, x, y, symbol):
@@ -77,9 +76,10 @@ class BoardCanvas(Canvas):
     def draw_pieces(self):
         for square in self.board:
             piece = self.board.piece_at(square)
-            if piece is not self.cursor_piece:
-                x, y = self.square_to_coord(square.file, square.row)
-                self.draw_piece(x, y, piece)
+            if piece is self.cursor_piece:
+                continue
+            x, y = self.square_to_coord(square.file, square.row)
+            self.draw_piece(x, y, piece)
 
     def clear_square(self, file, row):
         if (ord(file) - ord('a') + row) % 2 == 0:
@@ -119,7 +119,6 @@ def display_board(board):
     root = Tk()
     root.minsize(400, 400)
     bc = BoardCanvas(root)
-
     root.bind('<Key>', bc.key_event)
     bc.place(relwidth=1.0, relheight=1.0)
     bc.board = board
@@ -127,42 +126,4 @@ def display_board(board):
     root.mainloop()
 
 
-move_number = 0
-moves = [
-    (Square('e', 2), Square('e', 4)),
-    (Square('e', 7), Square('e', 5)),
-    (Square('g', 1), Square('f', 3)),
-    (Square('d', 7), Square('d', 6)),
-    (Square('d', 2), Square('d', 4)),
-    (Square('c', 8), Square('g', 4)),
-    (Square('d', 4), Square('e', 5)),
-    (Square('g', 4), Square('f', 3)),
-    (Square('d', 1), Square('f', 3)),
-    (Square('d', 6), Square('e', 5)),
-    (Square('f', 1), Square('c', 4)),
-    (Square('g', 8), Square('f', 6)),
-    (Square('f', 3), Square('b', 3)),
-    (Square('d', 8), Square('e', 7)),
-    (Square('b', 1), Square('c', 3)),
-    (Square('c', 7), Square('c', 6)),
-    (Square('c', 1), Square('g', 5)),
-    (Square('b', 7), Square('b', 5)),
-    (Square('c', 3), Square('b', 5)),
-    (Square('c', 6), Square('b', 5)),
-    (Square('c', 4), Square('b', 5)),
-    (Square('b', 8), Square('d', 7)),
-    (Square('e', 1), Square('c', 1)),
-    (Square('a', 1), Square('d', 1)),
-    (Square('a', 8), Square('d', 8)),
-    (Square('d', 1), Square('d', 7)),
-    (Square('d', 8), Square('d', 7)),
-    (Square('h', 1), Square('d', 1)),
-    (Square('e', 7), Square('e', 6)),
-    (Square('b', 5), Square('d', 7)),
-    (Square('f', 6), Square('d', 7)),
-    (Square('b', 3), Square('b', 8)),
-    (Square('d', 7), Square('b', 8)),
-    (Square('d', 1), Square('d', 8))]
 
-cg = ChessGame()
-display_board(cg.board)
