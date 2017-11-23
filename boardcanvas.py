@@ -25,7 +25,8 @@ class BoardCanvas(Canvas):
         self.bind('<Button>', self.button_event)
         self.bind('<ButtonRelease>', self.button_release_event)
         self.bind('<Motion>', self.motion_event)
-        self.board = ChessBoard().board
+        self.chess_game = ChessGame()
+        self.board = self.chess_game.board
         self.side = int(master.winfo_width() / 8)
         self.move = 0  # For testing
         self.cursor_piece = None
@@ -42,6 +43,7 @@ class BoardCanvas(Canvas):
         return Square(file, row)
 
     def button_event(self, event):
+        self.board = self.chess_game.board
         if self.cursor_piece is None:
             self.origin_square = self.coord_to_square(event.x, event.y)
             self.cursor_piece = self.board.piece_at(self.origin_square)
@@ -49,7 +51,7 @@ class BoardCanvas(Canvas):
     def button_release_event(self, event):
         self.cursor_piece = None
         destination_square = self.coord_to_square(event.x, event.y)
-        self.board.move_piece(self.origin_square, destination_square)
+        self.chess_game.play_move(self.origin_square, destination_square)
         self.draw_position()
 
     def draw_symbol(self, x, y, symbol):
