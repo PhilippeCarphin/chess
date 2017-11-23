@@ -46,7 +46,7 @@ class ChessBoard:
         try:
             del self.board[square]
         except KeyError as ke:
-            print("remove_piece(): Error : " + str(ke))
+            print("clear_square(): Error : " + str(ke))
         return piece
 
     def move_piece(self, origin, destination):
