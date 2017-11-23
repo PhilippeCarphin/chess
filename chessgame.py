@@ -40,6 +40,12 @@ class ChessGame:
             return self.rook_move_legal(origin_square, destination_square)
         elif piece.type == PieceType.PAWN:
             return self.pawn_move_legal(origin_square, destination_square)
+        elif piece.type == PieceType.BISHOP:
+            return self.bishop_move_legal(origin_square, destination_square)
+        elif piece.type == PieceType.QUEEN:
+            return self.queen_move_legal(origin_square, destination_square)
+        elif piece.type == PieceType.KING:
+            return self.king_move_legal(origin_square, destination_square)
 
         return True
 
@@ -59,6 +65,23 @@ class ChessGame:
                     continue
                 if self.board.piece_at(Square(d.file, row)) is not None:
                     return False
+        return True
+
+    def bishop_move_legal(self, o, d):
+        if abs(o.row - d.row) != abs(ord(o.file) - ord(d.file)):
+            return False
+        return True
+
+    def queen_move_legal(self, o, d):
+        return self.rook_move_legal(o,d) or self.bishop_move_legal(o,d)
+
+    def king_move_legal(self, o, d):
+        d_row=o.row - d.row
+        d_file=ord(o.file) - ord(d.file)
+        if abs(d_row) > 1 or abs(d_file) > 1:
+            return False
+        if d_row != 0 and d_file != 0:
+            return False
         return True
 
     def pawn_move_legal(self, origin_square, destination_square):
