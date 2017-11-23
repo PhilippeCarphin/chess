@@ -22,12 +22,41 @@ class BoardCanvas(Canvas):
     def __init__(self, master):
         Canvas.__init__(self, master, bd=0, cursor='circle', relief='sunken')
         self.bind('<Configure>', self.configure_event)
+        self.bind('<Button>', self.button_event)
+        self.bind('<ButtonRelease>', self.button_release_event)
+        self.bind('<Motion>', self.motion_event)
         self.board = ChessBoard().board
         self.side = int(master.winfo_width() / 8)
         self.move = 0  # For testing
+        self.current_piece = None
+        self.origin_square = None
+
+    def motion_event(self, event):
+        self.draw_position()
+        if self.current_piece is not None:
+            self.draw_piece(event.x -30, event.y-30, self.current_piece)
+
+    def coord_to_square(self, x, y):
+        file = chr(ord('a') + int(x / self.side))
+        row = 8 - int(y / self.side)
+        return Square(file, row)
+
+    def button_event(self, event):
+        if self.current_piece is None:
+            file, row = self.coord_to_square(event.x, event.y)
+            self.origin_square = Square(file, row)
+            self.current_piece = self.board.piece_at(self.origin_square)
+
+    def button_release_event(self, event):
+        self.current_piece = None
+
+        self.board.move_piece(self.origin_square, self.coord_to_square(event.x, event.y))
+        self.draw_position()
 
     def draw_symbol(self, x, y, symbol):
-        self.create_text(x, y, text=symbol, font=('Arial', int(0.8 * self.side)), fill='black', activefill='red')
+        x_offset = 0.5 * self.side
+        y_offset = 0.55 * self.side
+        self.create_text(x+x_offset, y+y_offset, text=symbol, font=('Arial', int(0.8 * self.side)), fill='black', activefill='red')
 
     def draw_square(self, file, row, color):
         x0 = (ord(file) - ord('a')) * self.side
@@ -35,31 +64,33 @@ class BoardCanvas(Canvas):
         self.create_rectangle(x0, y0, x0 + self.side, y0 + self.side, outline="black", fill=color, width=2)
 
     def square_to_coord(self, file, row):
-        x_offset = 0.5 * self.side
-        y_offset = 0.55 * self.side
-        return (ord(file) - ord('a')) * self.side + x_offset, (8 - row) * self.side + y_offset
+        return (ord(file) - ord('a')) * self.side, (8 - row) * self.side
 
-    def draw_piece(self, file, row, piece):
+    def draw_piece(self, x, y, piece):
         if piece.color == PieceColor.WHITE:
             symbol = white_unicode[piece.type]
         else:
             symbol = black_unicode[piece.type]
-        x, y = self.square_to_coord(file, row)
         self.draw_symbol(x, y, symbol)
 
     def draw_pieces(self):
         for square in self.board:
             piece = self.board.piece_at(square)
-            self.draw_piece(square.file, square.row, piece)
+            if piece is not self.current_piece:
+                x, y = self.square_to_coord(square.file, square.row)
+                self.draw_piece(x, y, piece)
+
+    def clear_square(self, file, row):
+        if (ord(file) - ord('a') + row) % 2 == 0:
+            color = 'grey'
+        else:
+            color = 'white'
+        self.draw_square(file, row, color)
 
     def draw_board(self):
         for file in 'abcdefgh':
             for row in range(1, 9):
-                if (ord(file) - ord('a') + row) % 2 == 0:
-                    color = 'grey'
-                else:
-                    color = 'white'
-                self.draw_square(file, row, color)
+                self.clear_square(file, row)
 
     def draw_position(self):
         self.delete('all')
@@ -88,7 +119,6 @@ def display_board(board):
     root.minsize(400, 400)
     bc = BoardCanvas(root)
     root.bind('<Key>', bc.key_event)
-    root.bind('<Button>', bc.key_event)
     bc.place(relwidth=1.0, relheight=1.0)
     bc.board = board
     bc.draw_position()
