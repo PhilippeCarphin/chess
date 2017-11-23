@@ -49,28 +49,59 @@ class ChessGame:
 
         return True
 
-
-    def rook_move_legal(self, o, d):
-        if d.file != o.file and o.row != d.row:
-            return False
-        if o.file != d.file:
-            for ord_file in range(ord(o.file), ord(d.file)):
-                if ord_file == ord(o.file):
-                    continue
-                if self.board.piece_at(Square(chr(ord_file), d.row)) is not None:
-                    return False
-        if o.row != d.row:
-            for row in range(o.row, d.row):
-                if row == o.row:
-                    continue
-                if self.board.piece_at(Square(d.file, row)) is not None:
-                    return False
-        return True
-
-    def bishop_move_legal(self, o, d):
+    def is_diagonal_move(self, o, d):
         if abs(o.row - d.row) != abs(ord(o.file) - ord(d.file)):
             return False
         return True
+
+    def is_latteral_move(self, o, d):
+        return self.is_file_move(o, d) or self.is_row_move(o, d)
+
+    def is_row_move(self, o, d):
+        return o.file == d.file and o.row != d.row
+
+    def get_file_path(self, o, d):
+        if ord(o.file) > ord(d.file):
+            file_range = reversed(range(ord(d.file), ord(o.file)))
+        else:
+            file_range = range(ord(o.file), ord(d.file))
+        return [Square(file, o.row) for file in map(chr, file_range)][1:-1]
+
+    def get_row_path(self, o, d):
+        print("get_file_path")
+        if o.row > d.row:
+            row_range = reversed(range(d.row, o.row))
+        else:
+            row_range = range(o.row, d.row)
+        return [Square(o.file, row) for row in row_range][1:-1]
+
+    def is_file_move(self, o, d):
+        return o.file != d.file and o.row == d.row
+
+    def rook_move_legal(self, o, d):
+        if self.is_row_move(o, d):
+            path = self.get_row_path(o, d)
+        elif self.is_file_move(o, d):
+            path = self.get_file_path(o, d)
+        else:
+            return False
+        print(path)
+
+        for square in path:
+            if self.board.piece_at(square):
+                return False
+        return True
+
+
+    def bishop_move_legal(self, o, d):
+        if not self.is_diagonal_move(o, d):
+            return False
+
+        for file, row in self.path(o, d):
+            if self.board.piece_at(Square(file, d.row)) is not None:
+                return False
+
+
 
     def queen_move_legal(self, o, d):
         return self.rook_move_legal(o,d) or self.bishop_move_legal(o,d)
