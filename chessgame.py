@@ -135,8 +135,30 @@ class ChessGame:
 
     def pawn_move_legal(self, origin_square, destination_square):
         piece = self.board.piece_at(origin_square)
-        direction = 1 if piece.color == PieceColor.WHITE else -1
+        if piece.color == PieceColor.WHITE:
+            return self.white_pawn_move_legal(origin_square, destination_square)
+        elif piece.color == PieceColor.BLACK:
+            return self.black_pawn_move_legal(origin_square, destination_square)
+        else:
+            raise Exception("Can't run")
+
+    def black_pawn_move_legal(self, o, d):
+        return True
 
     def white_pawn_move_legal(self, o, d):
-        pass
+        d_row=d.row - o.row
+        d_file=ord(d.file) - ord(o.file)
+        print("d_file = {}, d_row = {}".format(d_file, d_row))
+        destination_piece = self.board.piece_at(d)
+        if d_row == 1 and d_file in (1,-1):
+            if destination_piece is not None and destination_piece.color == PieceColor.BLACK:
+                return True
+            # TODO Do en-passant
+        elif d_row == 1 and d_file == 0:
+            if destination_piece is None:
+                return True
+        elif o.row == 2 and d_row == 2 and d_file == 0:
+            if self.board.piece_at(Square(o.file, o.row+1)) is None and destination_piece is None:
+                return True
 
+        return False
