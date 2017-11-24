@@ -46,8 +46,10 @@ class ChessGame:
             return self.queen_move_legal(origin_square, destination_square)
         elif piece.type == PieceType.KING:
             return self.king_move_legal(origin_square, destination_square)
-
-        return True
+        elif piece.type == PieceType.KNIGHT:
+            return self.knight_move_legal(origin_square, destination_square)
+        else:
+            raise Exception
 
     def is_diagonal_move(self, o, d):
         if abs(o.row - d.row) != abs(ord(o.file) - ord(d.file)):
@@ -62,18 +64,30 @@ class ChessGame:
 
     def get_file_path(self, o, d):
         if ord(o.file) > ord(d.file):
-            file_range = reversed(range(ord(d.file), ord(o.file)))
+            file_range = reversed(range(ord(d.file)+1, ord(o.file)+1))
         else:
             file_range = range(ord(o.file), ord(d.file))
-        return [Square(file, o.row) for file in map(chr, file_range)][1:-1]
+        return [Square(file, o.row) for file in map(chr, file_range)][1:]
 
     def get_row_path(self, o, d):
-        print("get_file_path")
         if o.row > d.row:
             row_range = reversed(range(d.row, o.row))
         else:
             row_range = range(o.row, d.row)
-        return [Square(o.file, row) for row in row_range][1:-1]
+        return [Square(o.file, row) for row in row_range][1:]
+
+    def get_diag_path(self, o, d):
+
+        if o.row > d.row:
+            row_range = reversed(range(d.row, o.row))
+        else:
+            row_range = range(o.row, d.row)
+        if ord(o.file) > ord(d.file):
+            file_range = reversed(range(ord(d.file)+1, ord(o.file)+1))
+        else:
+            file_range = range(ord(o.file), ord(d.file))
+
+        return [Square(file, row) for file, row in zip(map(chr, file_range), row_range)][1:]
 
     def is_file_move(self, o, d):
         return o.file != d.file and o.row == d.row
@@ -85,23 +99,19 @@ class ChessGame:
             path = self.get_file_path(o, d)
         else:
             return False
-        print(path)
 
         for square in path:
             if self.board.piece_at(square):
                 return False
         return True
 
-
     def bishop_move_legal(self, o, d):
         if not self.is_diagonal_move(o, d):
             return False
-
-        for file, row in self.path(o, d):
-            if self.board.piece_at(Square(file, d.row)) is not None:
+        for square in self.get_diag_path(o, d):
+            if self.board.piece_at(square) is not None:
                 return False
-
-
+        return True
 
     def queen_move_legal(self, o, d):
         return self.rook_move_legal(o,d) or self.bishop_move_legal(o,d)
@@ -111,9 +121,22 @@ class ChessGame:
         d_file=ord(o.file) - ord(d.file)
         if abs(d_row) > 1 or abs(d_file) > 1:
             return False
-        if d_row != 0 and d_file != 0:
-            return False
         return True
 
+    def knight_move_legal(self, o, d):
+        d_row=o.row - d.row
+        d_file=ord(o.file) - ord(d.file)
+        if abs(d_file) == 1 and abs(d_row) == 2:
+            return True
+        if (abs(d_file), abs(d_row)) in [(1,2),(2,1)]:
+            return True
+        else:
+            return False
+
     def pawn_move_legal(self, origin_square, destination_square):
-        return True
+        piece = self.board.piece_at(origin_square)
+        direction = 1 if piece.color == PieceColor.WHITE else -1
+
+    def white_pawn_move_legal(self, o, d):
+        pass
+

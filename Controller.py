@@ -1,6 +1,6 @@
-from chessset import *
-from chessgame import *
-from boardcanvas import *
+from chessset import Square
+from chessgame import ChessGame
+from boardcanvas import BoardCanvas
 from tkinter import Tk
 
 class Controller(Tk):
@@ -9,6 +9,7 @@ class Controller(Tk):
     def __init__(self, *args, **kwargs):
         Tk.__init__(self, *args, **kwargs)
         self.view = BoardCanvas(self)
+        self.minsize(400,400)
         self.view.place(relwidth=1.0, relheight=1.0)
         self.model = ChessGame()
 
