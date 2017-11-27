@@ -1,6 +1,4 @@
 from tkinter import Tk, Canvas
-
-from chessgame import ChessGame
 from chessset import ChessBoard, Square, PieceType, PieceColor
 
 white_unicode = {PieceType.KING: u'\u2654',
@@ -101,15 +99,6 @@ class BoardCanvas(Canvas):
     def configure_event(self, event):
         self.side = int(min(event.width, event.height) / 8)
         print(event)
-        self.draw_position()
-
-    def key_event(self, event):
-        global move_number
-        try:
-            self.board.move_piece(moves[move_number][0], moves[move_number][1])
-        except IndexError as ie:
-            pass
-        move_number += 1
         self.draw_position()
 
 
