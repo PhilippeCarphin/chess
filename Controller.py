@@ -2,12 +2,15 @@ from chessset import Square
 from chessgame import ChessGame
 from boardcanvas import BoardCanvas
 from tkinter import Tk
+from gametree import do_depth_two
+
 
 class Controller(Tk):
     """ Top level GUI class, catches inputs from the user and dispatches the
     appropriate requests to the model and vies classes """
     def __init__(self, *args, **kwargs):
         Tk.__init__(self, *args, **kwargs)
+        self.bind('<Key>', self.key_event)
         self.view = BoardCanvas(self)
         self.minsize(400,400)
         self.view.place(relwidth=1.0, relheight=1.0)
@@ -18,7 +21,12 @@ class Controller(Tk):
         self.view.draw_position()
 
     def key_event(self, event):
-        pass
+        if event.char == ' ':
+            self.model.setup_problem()
+            self.view.board = self.model.board
+            self.view.draw_position()
+        else:
+            do_depth_two(self.model)
 
     def run(self):
         self.view.board = self.model.board

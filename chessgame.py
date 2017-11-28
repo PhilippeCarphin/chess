@@ -3,16 +3,33 @@ from movement import get_path
 from copy import deepcopy
 from enum import Enum
 
+
 class GameState(Enum):
     NORMAL = 0
     CHECK = 1
     STALEMATE = 2
     CHECKMATE = 3
 
+
+xfen_map = {
+    'P': lambda :make_piece(PieceColor.BLACK, PieceType.PAWN),
+    'K': lambda :make_piece(PieceColor.BLACK, PieceType.KING),
+    'Q': lambda :make_piece(PieceColor.BLACK, PieceType.QUEEN),
+    'R': lambda :make_piece(PieceColor.BLACK, PieceType.ROOK),
+    'N': lambda :make_piece(PieceColor.BLACK, PieceType.KNIGHT),
+    'B': lambda :make_piece(PieceColor.BLACK, PieceType.BISHOP),
+    'p': lambda :make_piece(PieceColor.WHITE, PieceType.PAWN),
+    'k': lambda :make_piece(PieceColor.WHITE, PieceType.KING),
+    'q': lambda :make_piece(PieceColor.WHITE, PieceType.QUEEN),
+    'r': lambda :make_piece(PieceColor.WHITE, PieceType.ROOK),
+    'n': lambda :make_piece(PieceColor.WHITE, PieceType.KNIGHT),
+    'b': lambda :make_piece(PieceColor.WHITE, PieceType.BISHOP),
+}
 class ChessGame:
     def __init__(self):
         self.board = ChessBoard()
         self.setup_standard_board()
+        self.turn = PieceColor.WHITE
 
     def setup_standard_board(self):
         row_pawn = {PieceColor.BLACK: 7, PieceColor.WHITE: 2}
@@ -30,18 +47,48 @@ class ChessGame:
                 for file in file_piece[t]:
                     self.board.put_piece(Square(file, row), make_piece(c, t))
 
-    def play_move(self, o, d):
+    def setup_problem(self):
+        self.board = ChessBoard()
+        self.setup_position('1R6/r6P/4nBPK/8/5pq1/2Q2bpk/1P6/2R5')
+
+    def setup_position(self, xfen):
+        rows = xfen.split('/')
+        print(rows)
+        for row in range(8):
+            xfen_line = rows[row]
+            self.add_row(8-row, xfen_line)
+
+    def add_row(self, row, xfen_line):
+        file = 0
+        for char in xfen_line:
+            if char.isalpha():
+                print(char + " in " + xfen_line)
+                square = Square(chr(ord('a') + file), row)
+                print(square)
+                self.board.put_piece(square, xfen_map[char]())
+                file += 1
+            else:
+                file += int(char)
+
+    def is_legal(self, o, d):
         if o == d:
             return
+        piece = self.board.piece_at(o)
+        if piece is None:
+            return False
+        if piece.color != self.turn:
+            return False
         if not self.can_move_to(o, d):
-            return
+            return False
         if self.in_check_after_move(o, d):
-            return
+            return False
+        return True
 
-        self.board.move_piece(o, d)
-        self.has_legal_move(PieceColor.BLACK)
-        print("Play_move() : " + str(o) + " -> " + str(d))
-        print("GameState(BLACK) : " + str(self.game_state(PieceColor.BLACK)))
+    def play_move(self, o, d):
+        if self.is_legal(o, d):
+            self.board.move_piece(o, d)
+            self.turn = PieceColor.WHITE if self.turn == PieceColor.BLACK else PieceColor.BLACK
+
 
     def can_move_to(self, origin_square, destination_square):
         piece = self.board.piece_at(origin_square)
@@ -105,6 +152,17 @@ class ChessGame:
                             (not self.in_check_after_move(origin_square, destination_square)):
                         return True
         return False
+
+    def get_legal_moves(self, color):
+        legal_moves = []
+        for origin_square in [s for s in self.board if True and self.board.piece_at(s).color == color]:
+            for file in "abcdefgh":
+                for row in range(1, 9):
+                    destination_square = Square(file, row)
+                    if self.can_move_to(origin_square, destination_square) and \
+                            (not self.in_check_after_move(origin_square, destination_square)):
+                        legal_moves.append((origin_square, destination_square))
+        return legal_moves
 
     def game_state(self, color):
         if self.has_legal_move(color):

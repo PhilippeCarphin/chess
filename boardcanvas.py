@@ -32,11 +32,19 @@ class BoardCanvas(Canvas):
         self.move = 0  # For testing
         self.cursor_piece = None
         self.origin_square = None
+        self.x_cursor_offset = 0
+        self.y_cursor_offset = 0
+        self.highlight_square = None
 
     def motion_event(self, event):
         if self.cursor_piece is not None:
             self.draw_position()
-            self.draw_piece(event.x -30, event.y-30, self.cursor_piece)
+            self.draw_piece(event.x + self.x_cursor_offset, event.y + self.y_cursor_offset, self.cursor_piece)
+            destination_square = self.coord_to_square(event.x, event.y)
+            if self.master.model.is_legal(self.origin_square, destination_square):
+                self.highlight_square = self.coord_to_square(event.x, event.y)
+            else:
+                self.highlight_square = None
 
     def coord_to_square(self, x, y):
         file = chr(ord('a') + int(x / self.side))
@@ -44,14 +52,20 @@ class BoardCanvas(Canvas):
         return Square(file, row)
 
     def button_event(self, event):
+        self.x_cursor_offset = - (event.x % self.side)
+        self.y_cursor_offset = - (event.y % self.side)
         if self.cursor_piece is None:
             self.origin_square = self.coord_to_square(event.x, event.y)
-            self.cursor_piece = self.board.piece_at(self.origin_square)
+            piece = self.board.piece_at(self.origin_square)
+            if piece is not None and self.master.model.turn == piece.color:
+                self.cursor_piece = piece
+                self.motion_event(event)
 
     def button_release_event(self, event):
         self.cursor_piece = None
         destination_square = self.coord_to_square(event.x, event.y)
         self.master.move_submit(self.origin_square, destination_square)
+        self.highlight_square = None
         self.draw_position()
 
     def draw_symbol(self, x, y, symbol):
@@ -80,9 +94,11 @@ class BoardCanvas(Canvas):
 
     def clear_square(self, file, row):
         if (ord(file) - ord('a') + row) % 2 == 0:
-            color = 'grey'
-        else:
             color = 'white'
+        else:
+            color = 'grey'
+        if Square(file,row) == self.highlight_square:
+            color = 'blue'
         self.draw_square(file, row, color)
 
     def draw_board(self):
