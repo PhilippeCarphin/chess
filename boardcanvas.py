@@ -15,6 +15,9 @@ black_unicode = {PieceType.KING: u'\u265A',
                  PieceType.KNIGHT: u'\u265E',
                  PieceType.PAWN: u'\u265F'}
 
+pieces_unicode = {PieceColor.WHITE: white_unicode,
+                  PieceColor.BLACK: black_unicode}
+
 
 class BoardCanvas(Canvas):
     def __init__(self, master):
@@ -65,11 +68,7 @@ class BoardCanvas(Canvas):
         return (ord(file) - ord('a')) * self.side, (8 - row) * self.side
 
     def draw_piece(self, x, y, piece):
-        if piece.color == PieceColor.WHITE:
-            symbol = white_unicode[piece.type]
-        else:
-            symbol = black_unicode[piece.type]
-        self.draw_symbol(x, y, symbol)
+        self.draw_symbol(x, y, pieces_unicode[piece.color][piece.type])
 
     def draw_pieces(self):
         for square in self.board:
