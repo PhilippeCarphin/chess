@@ -37,7 +37,7 @@ def get_row_path(o, d):
 
 def get_diagonal_path(o, d):
     if o.row > d.row:
-        row_range = reversed(range(d.row, o.row))
+        row_range = reversed(range(d.row+1, o.row+1))
     else:
         row_range = range(o.row, d.row)
     if ord(o.file) > ord(d.file):

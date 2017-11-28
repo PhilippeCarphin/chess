@@ -1,6 +1,6 @@
 from grid import Grid, GridError
 from enum import Enum
-from chessrules import *
+from movement import *
 
 
 class PieceType(Enum):
@@ -50,6 +50,8 @@ class Queen(Piece):
         Piece.__init__(self, color, PieceType.QUEEN)
 
     def legal_movement(self, origin_square, destination_square):
+        is_diag = is_diagonal_move(origin_square, destination_square)
+        is_lat = is_lateral_move(origin_square, destination_square)
         return is_diagonal_move(origin_square, destination_square) or is_lateral_move(origin_square, destination_square)
 
 
@@ -61,8 +63,9 @@ class Pawn(Piece):
         row_diff = destination_square.row - origin_square.row
         file_diff = ord(destination_square.file) - ord(origin_square.file)
         direction = 1 if self.color == PieceColor.WHITE else -1
+        pawn_start_row = 2 if self.color == PieceColor.WHITE else 7
 
-        if row_diff == 2*direction and origin_square.row == 2*direction and file_diff == 0:
+        if row_diff == 2*direction and origin_square.row == pawn_start_row and file_diff == 0:
             return True
         if row_diff == 1*direction and file_diff in (-1, 0, 1):
             return True
