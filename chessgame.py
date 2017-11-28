@@ -1,6 +1,13 @@
 from chessset import ChessBoard, PieceType, PieceColor, Piece, Square, make_piece, King
 from movement import get_path
 from copy import deepcopy
+from enum import Enum
+
+class GameState(Enum):
+    NORMAL = 0
+    CHECK = 1
+    STALEMATE = 2
+    CHECKMATE = 3
 
 class ChessGame:
     def __init__(self):
@@ -34,8 +41,7 @@ class ChessGame:
         self.board.move_piece(o, d)
         self.has_legal_move(PieceColor.BLACK)
         print("Play_move() : " + str(o) + " -> " + str(d))
-        print("Stalemate : " + str(self.stalemate(PieceColor.BLACK)))
-        print("Checkmate : " + str(self.checkmate(PieceColor.BLACK)))
+        print("GameState(BLACK) : " + str(self.game_state(PieceColor.BLACK)))
 
     def can_move_to(self, origin_square, destination_square):
         piece = self.board.piece_at(origin_square)
@@ -100,16 +106,16 @@ class ChessGame:
                         return True
         return False
 
-    def checkmate(self, color):
-        if not self.has_legal_move(color) and self.in_check(color):
-            return True
+    def game_state(self, color):
+        if self.has_legal_move(color):
+            if self.in_check(color):
+                return GameState.CHECK
+            else:
+                return GameState.NORMAL
         else:
-            return False
-
-    def stalemate(self, color):
-        if not self.has_legal_move(color) and not self.in_check(color):
-            return True
-        else:
-            return False
+            if self.in_check(color):
+                return GameState.CHECKMATE
+            else:
+                return GameState.STALEMATE
 
 
