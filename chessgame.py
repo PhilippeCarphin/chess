@@ -35,8 +35,18 @@ class ChessGame:
 
     def can_move_to(self, origin_square, destination_square):
         piece = self.board.piece_at(origin_square)
+        destination_piece = self.board.piece_at(destination_square)
+        row_diff = destination_square.row - origin_square.row
+        file_diff = ord(destination_square.file) - ord(origin_square.file)
+
         if not piece.legal_movement(origin_square, destination_square):
             return False
+
+        if piece.type == PieceType.PAWN:
+            if abs(file_diff) == 1 and destination_piece is None:
+                return False
+            if file_diff == 0 and destination_piece is not None:
+                return False
 
         for square in get_path(origin_square, destination_square):
             if self.board.piece_at(square):
