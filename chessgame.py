@@ -32,6 +32,10 @@ class ChessGame:
             return
 
         self.board.move_piece(o, d)
+        self.has_legal_move(PieceColor.BLACK)
+        print("Play_move() : " + str(o) + " -> " + str(d))
+        print("Stalemate : " + str(self.stalemate(PieceColor.BLACK)))
+        print("Checkmate : " + str(self.checkmate(PieceColor.BLACK)))
 
     def can_move_to(self, origin_square, destination_square):
         piece = self.board.piece_at(origin_square)
@@ -40,6 +44,9 @@ class ChessGame:
         file_diff = ord(destination_square.file) - ord(origin_square.file)
 
         if not piece.legal_movement(origin_square, destination_square):
+            return False
+
+        if destination_piece is not None and destination_piece.color == piece.color:
             return False
 
         if piece.type == PieceType.PAWN:
@@ -79,6 +86,28 @@ class ChessGame:
         temp_game.board.move_piece(origin_square, destination_square)
 
         if temp_game.in_check(mover_color):
+            return True
+        else:
+            return False
+
+    def has_legal_move(self, color):
+        for origin_square in [s for s in self.board if True and self.board.piece_at(s).color == color]:
+            for file in "abcdefgh":
+                for row in range(1, 9):
+                    destination_square = Square(file, row)
+                    if self.can_move_to(origin_square, destination_square) and \
+                            (not self.in_check_after_move(origin_square, destination_square)):
+                        return True
+        return False
+
+    def checkmate(self, color):
+        if not self.has_legal_move(color) and self.in_check(color):
+            return True
+        else:
+            return False
+
+    def stalemate(self, color):
+        if not self.has_legal_move(color) and not self.in_check(color):
             return True
         else:
             return False
