@@ -28,9 +28,10 @@ class ChessGame:
             return
         if not self.can_move_to(o, d):
             return
+        if self.in_check_after_move(o, d):
+            return
 
         self.board.move_piece(o, d)
-        print("in_check() == " + str(self.in_check(PieceColor.WHITE)))
 
     def can_move_to(self, origin_square, destination_square):
         piece = self.board.piece_at(origin_square)
@@ -50,6 +51,8 @@ class ChessGame:
                 king = piece
                 king_square = square
                 break
+        else:
+            raise Exception("No king of color " + str(color) + " on board")
 
         other_color = PieceColor.WHITE if color == PieceColor.BLACK else PieceColor.BLACK
 
@@ -60,5 +63,14 @@ class ChessGame:
 
         return False
 
+    def in_check_after_move(self, origin_square, destination_square):
+        temp_game = deepcopy(self)
+        mover_color = temp_game.board.piece_at(origin_square).color
+        temp_game.board.move_piece(origin_square, destination_square)
+
+        if temp_game.in_check(mover_color):
+            return True
+        else:
+            return False
 
 
