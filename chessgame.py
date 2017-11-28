@@ -1,6 +1,5 @@
-from chessset import ChessBoard, PieceType, PieceColor, Piece, Square
-from chessrules import is_legal
-
+from chessset import ChessBoard, PieceType, PieceColor, Piece, Square, make_piece
+from chessrules import get_path
 
 class ChessGame:
     def __init__(self):
@@ -21,8 +20,16 @@ class ChessGame:
             for c in PieceColor:
                 row = row_pawn[c] if t == PieceType.PAWN else row_piece[c]
                 for file in file_piece[t]:
-                    self.board.put_piece(Square(file, row), Piece(c,t))
+                    self.board.put_piece(Square(file, row), make_piece(c, t))
 
     def play_move(self, o, d):
-        if is_legal(self.board, o, d):
-            self.board.move_piece(o, d)
+        piece = self.board.piece_at(o)
+        if not piece.legal_movement(o, d):
+            return
+
+        path = get_path(o, d)
+        for square in get_path(o, d):
+            if self.board.piece_at(square) is not None:
+                return
+
+        self.board.move_piece(o, d)
