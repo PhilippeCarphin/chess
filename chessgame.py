@@ -1,5 +1,6 @@
-from chessset import ChessBoard, PieceType, PieceColor, Piece, Square, make_piece
-from chessrules import get_path
+from chessset import ChessBoard, PieceType, PieceColor, Piece, Square, make_piece, King
+from movement import get_path
+from copy import deepcopy
 
 class ChessGame:
     def __init__(self):
@@ -23,13 +24,41 @@ class ChessGame:
                     self.board.put_piece(Square(file, row), make_piece(c, t))
 
     def play_move(self, o, d):
-        piece = self.board.piece_at(o)
-        if not piece.legal_movement(o, d):
+        if o == d:
+            return
+        if not self.can_move_to(o, d):
             return
 
-        path = get_path(o, d)
-        for square in get_path(o, d):
-            if self.board.piece_at(square) is not None:
-                return
-
         self.board.move_piece(o, d)
+        print("in_check() == " + str(self.in_check(PieceColor.WHITE)))
+
+    def can_move_to(self, origin_square, destination_square):
+        piece = self.board.piece_at(origin_square)
+        if not piece.legal_movement(origin_square, destination_square):
+            return False
+
+        for square in get_path(origin_square, destination_square):
+            if self.board.piece_at(square):
+                return False
+
+        return True
+
+    def in_check(self, color):
+        for square in self.board:
+            piece = self.board.piece_at(square)
+            if isinstance(piece, King) and piece.color == color:
+                king = piece
+                king_square = square
+                break
+
+        other_color = PieceColor.WHITE if color == PieceColor.BLACK else PieceColor.BLACK
+
+        for square in self.board:
+            piece = self.board.piece_at(square)
+            if piece.color == other_color and self.can_move_to(square, king_square):
+                return True
+
+        return False
+
+
+
