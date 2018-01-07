@@ -49,4 +49,3 @@ class Grid(MutableMapping):
         return (self.width == other.width
                 and self.height == other.height
                 and self._storage == other._storage)
-

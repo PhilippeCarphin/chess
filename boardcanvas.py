@@ -1,4 +1,5 @@
 from tkinter import Tk, Canvas
+
 from chessset import ChessBoard, Square, PieceType, PieceColor
 
 white_unicode = {PieceType.KING: u'\u2654',
@@ -71,7 +72,8 @@ class BoardCanvas(Canvas):
     def draw_symbol(self, x, y, symbol):
         x_offset = 0.5 * self.side
         y_offset = 0.55 * self.side
-        self.create_text(x+x_offset, y+y_offset, text=symbol, font=('Arial', int(0.8 * self.side)), fill='black', activefill='red')
+        self.create_text(x + x_offset, y + y_offset, text=symbol, font=('Arial', int(0.8 * self.side)), fill='black',
+                         activefill='red')
 
     def draw_square(self, file, row, color):
         x0 = (ord(file) - ord('a')) * self.side
@@ -97,7 +99,7 @@ class BoardCanvas(Canvas):
             color = 'white'
         else:
             color = 'grey'
-        if Square(file,row) == self.highlight_square:
+        if Square(file, row) == self.highlight_square:
             color = 'blue'
         self.draw_square(file, row, color)
 
@@ -128,6 +130,3 @@ def display_board(board):
     bc.board = board
     bc.draw_position()
     root.mainloop()
-
-
-

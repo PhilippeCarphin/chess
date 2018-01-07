@@ -1,6 +1,8 @@
-from chessgame import ChessGame, GameState
 from copy import deepcopy
+
+from chessgame import ChessGame, GameState
 from chessset import PieceColor
+
 
 class Node:
     def __init__(self):
@@ -17,9 +19,11 @@ class Node:
     def print(self):
         print("Move : " + str(self.origin_square) + " ---> " + str(self.destination_square))
 
+
 class GameTree:
     def __init__(self):
         self.root = Node()
+
 
 def make_game_tree(game, depth):
     assert isinstance(game, ChessGame)
@@ -33,6 +37,7 @@ def make_game_tree(game, depth):
         new_node.game = new_game
         tree.root.children.append(new_node)
 
+
 def append_legal_moves(node, color):
     for origin_square in node.game.board:
         piece = node.game.board.piece_at(origin_square)
@@ -44,6 +49,7 @@ def append_legal_moves(node, color):
             child.origin_square = m[0]
             child.destination_square = m[1]
             node.add_child(child)
+
 
 def do_depth_two(original_game):
     root = Node()
@@ -64,9 +70,3 @@ def do_depth_two(original_game):
                     print("CHECKMATE_FOUND")
             print("Done with level 2 move (nodes = " + str(leaves))
         print("Done with level 1 move")
-
-
-
-
-
-

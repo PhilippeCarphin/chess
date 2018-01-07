@@ -1,18 +1,20 @@
-from chessset import Square
-from chessgame import ChessGame
-from boardcanvas import BoardCanvas
 from tkinter import Tk
+
+from boardcanvas import BoardCanvas
+from chessgame import ChessGame
+from chessset import Square
 from gametree import do_depth_two
 
 
 class Controller(Tk):
     """ Top level GUI class, catches inputs from the user and dispatches the
     appropriate requests to the model and vies classes """
+
     def __init__(self, *args, **kwargs):
         Tk.__init__(self, *args, **kwargs)
         self.bind('<Key>', self.key_event)
         self.view = BoardCanvas(self)
-        self.minsize(400,400)
+        self.minsize(400, 400)
         self.view.place(relwidth=1.0, relheight=1.0)
         self.model = ChessGame()
 
@@ -31,6 +33,7 @@ class Controller(Tk):
     def run(self):
         self.view.board = self.model.board
         self.mainloop()
+
 
 move_number = 0
 moves = [
@@ -68,7 +71,6 @@ moves = [
     (Square('b', 3), Square('b', 8)),
     (Square('d', 7), Square('b', 8)),
     (Square('d', 1), Square('d', 8))]
-
 
 if __name__ == "__main__":
     ctrl = Controller()

@@ -1,5 +1,6 @@
-from grid import Grid, GridError
 from enum import Enum
+
+from grid import Grid, GridError
 from movement import *
 
 
@@ -65,9 +66,9 @@ class Pawn(Piece):
         direction = 1 if self.color == PieceColor.WHITE else -1
         pawn_start_row = 2 if self.color == PieceColor.WHITE else 7
 
-        if row_diff == 2*direction and origin_square.row == pawn_start_row and file_diff == 0:
+        if row_diff == 2 * direction and origin_square.row == pawn_start_row and file_diff == 0:
             return True
-        if row_diff == 1*direction and file_diff in (-1, 0, 1):
+        if row_diff == 1 * direction and file_diff in (-1, 0, 1):
             return True
         return False
 
@@ -100,6 +101,7 @@ piece_maker = {PieceType.ROOK: (lambda c: Rook(c)),
 
 def make_piece(piece_color, piece_type):
     return piece_maker[piece_type](piece_color)
+
 
 class ChessBoardError(Exception):
     pass
