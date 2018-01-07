@@ -42,7 +42,7 @@ class BoardCanvas(Canvas):
             self.draw_position()
             self.draw_piece(event.x + self.x_cursor_offset, event.y + self.y_cursor_offset, self.cursor_piece)
             destination_square = self.coord_to_square(event.x, event.y)
-            if self.master.model.is_legal(self.origin_square, destination_square):
+            if self.cursor_piece.legal_movement(self.origin_square, destination_square):
                 self.highlight_square = self.coord_to_square(event.x, event.y)
             else:
                 self.highlight_square = None
