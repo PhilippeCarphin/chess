@@ -2,21 +2,21 @@ from tkinter import Tk, Canvas
 from chessset import ChessBoard, Square, PieceType, PieceColor
 
 white_unicode = {
-        PieceType.KING:   u'\u2654',
-        PieceType.QUEEN:  u'\u2655',
-        PieceType.ROOK:   u'\u2656',
-        PieceType.BISHOP: u'\u2657',
-        PieceType.KNIGHT: u'\u2658',
-        PieceType.PAWN:   u'\u2659'
+        PieceType.KNG: u'\u2654',
+        PieceType.QUN: u'\u2655',
+        PieceType.ROK: u'\u2656',
+        PieceType.BSP: u'\u2657',
+        PieceType.NIT: u'\u2658',
+        PieceType.PWN: u'\u2659'
 }
 
 black_unicode = {
-        PieceType.KING:   u'\u265A',
-        PieceType.QUEEN:  u'\u265B',
-        PieceType.ROOK:   u'\u265C',
-        PieceType.BISHOP: u'\u265D',
-        PieceType.KNIGHT: u'\u265E',
-        PieceType.PAWN:   u'\u265F'
+        PieceType.KNG: u'\u265A',
+        PieceType.QUN: u'\u265B',
+        PieceType.ROK: u'\u265C',
+        PieceType.BSP: u'\u265D',
+        PieceType.NIT: u'\u265E',
+        PieceType.PWN: u'\u265F'
 }
 
 pieces_unicode = {PieceColor.WHITE: white_unicode,
