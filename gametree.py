@@ -1,6 +1,6 @@
 from chessgame import ChessGame, GameState
 from copy import deepcopy
-from chessset import PieceColor
+from chessset import PieceColr
 
 class Node:
     def __init__(self):

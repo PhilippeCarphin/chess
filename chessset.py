@@ -12,9 +12,9 @@ class PieceType(Enum):
     KNG = 6
 
 
-class PieceColor(Enum):
-    WHITE = 1
-    BLACK = 2
+class PieceColr(Enum):
+    WHT = 1
+    BLK = 2
 
 
 class Piece:
@@ -62,8 +62,8 @@ class Pawn(Piece):
     def legal_movement(self, origin_square, destination_square):
         row_diff = destination_square.row - origin_square.row
         file_diff = ord(destination_square.file) - ord(origin_square.file)
-        direction = 1 if self.color == PieceColor.WHITE else -1
-        pawn_start_row = 2 if self.color == PieceColor.WHITE else 7
+        direction = 1 if self.color == PieceColr.WHT else -1
+        pawn_start_row = 2 if self.color == PieceColr.WHT else 7
 
         if row_diff == 2*direction and origin_square.row == pawn_start_row and file_diff == 0:
             return True

@@ -1,5 +1,5 @@
 from tkinter import Tk, Canvas
-from chessset import ChessBoard, Square, PieceType, PieceColor
+from chessset import ChessBoard, Square, PieceType, PieceColr
 
 white_unicode = {
         PieceType.KNG: u'\u2654',
@@ -19,8 +19,9 @@ black_unicode = {
         PieceType.PWN: u'\u265F'
 }
 
-pieces_unicode = {PieceColor.WHITE: white_unicode,
-                  PieceColor.BLACK: black_unicode}
+pieces_unicode = {
+        PieceColr.WHT: white_unicode,
+        PieceColr.BLK: black_unicode}
 
 
 class BoardCanvas(Canvas):

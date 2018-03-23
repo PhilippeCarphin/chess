@@ -1,4 +1,4 @@
-from chessset import ChessBoard, PieceType, PieceColor, Piece, Square, make_piece, King
+from chessset import ChessBoard, PieceType, PieceColr, Piece, Square, make_piece, King
 from movement import get_path
 from copy import deepcopy
 from enum import Enum
@@ -12,37 +12,45 @@ class GameState(Enum):
 
 
 xfen_map = {
-    'P': lambda :make_piece(PieceColor.BLACK, PieceType.PWN),
-    'K': lambda :make_piece(PieceColor.BLACK, PieceType.KNG),
-    'Q': lambda :make_piece(PieceColor.BLACK, PieceType.QUN),
-    'R': lambda :make_piece(PieceColor.BLACK, PieceType.ROK),
-    'N': lambda :make_piece(PieceColor.BLACK, PieceType.NIT),
-    'B': lambda :make_piece(PieceColor.BLACK, PieceType.BSP),
-    'p': lambda :make_piece(PieceColor.WHITE, PieceType.PWN),
-    'k': lambda :make_piece(PieceColor.WHITE, PieceType.KNG),
-    'q': lambda :make_piece(PieceColor.WHITE, PieceType.QUN),
-    'r': lambda :make_piece(PieceColor.WHITE, PieceType.ROK),
-    'n': lambda :make_piece(PieceColor.WHITE, PieceType.NIT),
-    'b': lambda :make_piece(PieceColor.WHITE, PieceType.BSP),
+    'P': lambda :make_piece(PieceColr.BLK, PieceType.PWN),
+    'K': lambda :make_piece(PieceColr.BLK, PieceType.KNG),
+    'Q': lambda :make_piece(PieceColr.BLK, PieceType.QUN),
+    'R': lambda :make_piece(PieceColr.BLK, PieceType.ROK),
+    'N': lambda :make_piece(PieceColr.BLK, PieceType.NIT),
+    'B': lambda :make_piece(PieceColr.BLK, PieceType.BSP),
+    'p': lambda :make_piece(PieceColr.WHT, PieceType.PWN),
+    'k': lambda :make_piece(PieceColr.WHT, PieceType.KNG),
+    'q': lambda :make_piece(PieceColr.WHT, PieceType.QUN),
+    'r': lambda :make_piece(PieceColr.WHT, PieceType.ROK),
+    'n': lambda :make_piece(PieceColr.WHT, PieceType.NIT),
+    'b': lambda :make_piece(PieceColr.WHT, PieceType.BSP),
 }
 class ChessGame:
     def __init__(self):
         self.board = ChessBoard()
         self.setup_standard_board()
-        self.turn = PieceColor.WHITE
+        self.turn = PieceColr.WHT
 
     def setup_standard_board(self):
-        row_pawn = {PieceColor.BLACK: 7, PieceColor.WHITE: 2}
-        row_piece = {PieceColor.BLACK: 8, PieceColor.WHITE: 1}
-        file_piece = {PieceType.ROK: 'ah',
-                      PieceType.NIT: 'bg',
-                      PieceType.BSP: 'cf',
-                      PieceType.QUN: 'd',
-                      PieceType.KNG: 'e',
-                      PieceType.PWN: 'abcdefgh'}
+        row_pawn = {
+            PieceColr.BLK: 7,
+            PieceColr.WHT: 2
+        }
+        row_piece = {
+            PieceColr.BLK: 8,
+            PieceColr.WHT: 1
+        }
+        file_piece = {
+            PieceType.ROK: 'ah',
+            PieceType.NIT: 'bg',
+            PieceType.BSP: 'cf',
+            PieceType.QUN: 'd',
+            PieceType.KNG: 'e',
+            PieceType.PWN: 'abcdefgh'
+        }
 
         for t in PieceType:
-            for c in PieceColor:
+            for c in PieceColr:
                 row = row_pawn[c] if t == PieceType.PWN else row_piece[c]
                 for file in file_piece[t]:
                     self.board.put_piece(Square(file, row), make_piece(c, t))
@@ -87,7 +95,7 @@ class ChessGame:
     def play_move(self, o, d):
         if self.is_legal(o, d):
             self.board.move_piece(o, d)
-            self.turn = PieceColor.WHITE if self.turn == PieceColor.BLACK else PieceColor.BLACK
+            self.turn = PieceColr.WHT if self.turn == PieceColr.BLK else PieceColr.BLK
 
 
     def can_move_to(self, origin_square, destination_square):
@@ -124,7 +132,7 @@ class ChessGame:
         else:
             raise Exception("No king of color " + str(color) + " on board")
 
-        other_color = PieceColor.WHITE if color == PieceColor.BLACK else PieceColor.BLACK
+        other_color = PieceColr.WHT if color == PieceColr.BLK else PieceColr.BLK
 
         for square in self.board:
             piece = self.board.piece_at(square)
