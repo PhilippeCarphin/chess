@@ -4,12 +4,12 @@ from movement import *
 
 
 class PieceType(Enum):
-    PAWN = 1
-    ROOK = 2
-    KNIGHT = 3
-    BISHOP = 4
-    QUEEN = 5
-    KING = 6
+    PWN = 1
+    ROK = 2
+    NIT = 3
+    BSP = 4
+    QUN = 5
+    KNG = 6
 
 
 class PieceColor(Enum):
@@ -31,7 +31,7 @@ class Piece:
 
 class Rook(Piece):
     def __init__(self, color):
-        Piece.__init__(self, color, PieceType.ROOK)
+        Piece.__init__(self, color, PieceType.ROK)
 
     def legal_movement(self, origin_square, destination_square):
         return is_lateral_move(origin_square, destination_square)
@@ -39,7 +39,7 @@ class Rook(Piece):
 
 class Bishop(Piece):
     def __init__(self, color):
-        Piece.__init__(self, color, PieceType.BISHOP)
+        Piece.__init__(self, color, PieceType.BSP)
 
     def legal_movement(self, origin_square, destination_square):
         return is_diagonal_move(origin_square, destination_square)
@@ -47,7 +47,7 @@ class Bishop(Piece):
 
 class Queen(Piece):
     def __init__(self, color):
-        Piece.__init__(self, color, PieceType.QUEEN)
+        Piece.__init__(self, color, PieceType.QUN)
 
     def legal_movement(self, origin_square, destination_square):
         is_diag = is_diagonal_move(origin_square, destination_square)
@@ -57,7 +57,7 @@ class Queen(Piece):
 
 class Pawn(Piece):
     def __init__(self, color):
-        Piece.__init__(self, color, PieceType.PAWN)
+        Piece.__init__(self, color, PieceType.PWN)
 
     def legal_movement(self, origin_square, destination_square):
         row_diff = destination_square.row - origin_square.row
@@ -74,7 +74,7 @@ class Pawn(Piece):
 
 class Knight(Piece):
     def __init__(self, color):
-        Piece.__init__(self, color, PieceType.KNIGHT)
+        Piece.__init__(self, color, PieceType.NIT)
 
     def legal_movement(self, origin_square, destination_square):
         file_difference = ord(destination_square.file) - ord(origin_square.file)
@@ -84,18 +84,18 @@ class Knight(Piece):
 
 class King(Piece):
     def __init__(self, color):
-        Piece.__init__(self, color, PieceType.KING)
+        Piece.__init__(self, color, PieceType.KNG)
 
     def legal_movement(self, origin_square, destination_square):
         return distance(origin_square, destination_square) == 1
 
 
-piece_maker = {PieceType.ROOK: (lambda c: Rook(c)),
-               PieceType.BISHOP: (lambda c: Bishop(c)),
-               PieceType.KNIGHT: (lambda c: Knight(c)),
-               PieceType.QUEEN: (lambda c: Queen(c)),
-               PieceType.KING: (lambda c: King(c)),
-               PieceType.PAWN: (lambda c: Pawn(c))}
+piece_maker = {PieceType.ROK: (lambda c: Rook(c)),
+               PieceType.BSP: (lambda c: Bishop(c)),
+               PieceType.NIT: (lambda c: Knight(c)),
+               PieceType.QUN: (lambda c: Queen(c)),
+               PieceType.KNG: (lambda c: King(c)),
+               PieceType.PWN: (lambda c: Pawn(c))}
 
 
 def make_piece(piece_color, piece_type):

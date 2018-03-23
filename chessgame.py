@@ -12,18 +12,18 @@ class GameState(Enum):
 
 
 xfen_map = {
-    'P': lambda :make_piece(PieceColor.BLACK, PieceType.PAWN),
-    'K': lambda :make_piece(PieceColor.BLACK, PieceType.KING),
-    'Q': lambda :make_piece(PieceColor.BLACK, PieceType.QUEEN),
-    'R': lambda :make_piece(PieceColor.BLACK, PieceType.ROOK),
-    'N': lambda :make_piece(PieceColor.BLACK, PieceType.KNIGHT),
-    'B': lambda :make_piece(PieceColor.BLACK, PieceType.BISHOP),
-    'p': lambda :make_piece(PieceColor.WHITE, PieceType.PAWN),
-    'k': lambda :make_piece(PieceColor.WHITE, PieceType.KING),
-    'q': lambda :make_piece(PieceColor.WHITE, PieceType.QUEEN),
-    'r': lambda :make_piece(PieceColor.WHITE, PieceType.ROOK),
-    'n': lambda :make_piece(PieceColor.WHITE, PieceType.KNIGHT),
-    'b': lambda :make_piece(PieceColor.WHITE, PieceType.BISHOP),
+    'P': lambda :make_piece(PieceColor.BLACK, PieceType.PWN),
+    'K': lambda :make_piece(PieceColor.BLACK, PieceType.KNG),
+    'Q': lambda :make_piece(PieceColor.BLACK, PieceType.QUN),
+    'R': lambda :make_piece(PieceColor.BLACK, PieceType.ROK),
+    'N': lambda :make_piece(PieceColor.BLACK, PieceType.NIT),
+    'B': lambda :make_piece(PieceColor.BLACK, PieceType.BSP),
+    'p': lambda :make_piece(PieceColor.WHITE, PieceType.PWN),
+    'k': lambda :make_piece(PieceColor.WHITE, PieceType.KNG),
+    'q': lambda :make_piece(PieceColor.WHITE, PieceType.QUN),
+    'r': lambda :make_piece(PieceColor.WHITE, PieceType.ROK),
+    'n': lambda :make_piece(PieceColor.WHITE, PieceType.NIT),
+    'b': lambda :make_piece(PieceColor.WHITE, PieceType.BSP),
 }
 class ChessGame:
     def __init__(self):
@@ -34,16 +34,16 @@ class ChessGame:
     def setup_standard_board(self):
         row_pawn = {PieceColor.BLACK: 7, PieceColor.WHITE: 2}
         row_piece = {PieceColor.BLACK: 8, PieceColor.WHITE: 1}
-        file_piece = {PieceType.ROOK: 'ah',
-                      PieceType.KNIGHT: 'bg',
-                      PieceType.BISHOP: 'cf',
-                      PieceType.QUEEN: 'd',
-                      PieceType.KING: 'e',
-                      PieceType.PAWN: 'abcdefgh'}
+        file_piece = {PieceType.ROK: 'ah',
+                      PieceType.NIT: 'bg',
+                      PieceType.BSP: 'cf',
+                      PieceType.QUN: 'd',
+                      PieceType.KNG: 'e',
+                      PieceType.PWN: 'abcdefgh'}
 
         for t in PieceType:
             for c in PieceColor:
-                row = row_pawn[c] if t == PieceType.PAWN else row_piece[c]
+                row = row_pawn[c] if t == PieceType.PWN else row_piece[c]
                 for file in file_piece[t]:
                     self.board.put_piece(Square(file, row), make_piece(c, t))
 
@@ -102,7 +102,7 @@ class ChessGame:
         if destination_piece is not None and destination_piece.color == piece.color:
             return False
 
-        if piece.type == PieceType.PAWN:
+        if piece.type == PieceType.PWN:
             if abs(file_diff) == 1 and destination_piece is None:
                 return False
             if file_diff == 0 and destination_piece is not None:
